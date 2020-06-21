@@ -10,8 +10,8 @@ const db = knex({
 	connection: {
 		host: '127.0.0.1',
 		user: 'postgres',
-		password: 'Kimora1205',
-		database: 'mega',
+		password: '',
+		database: '',
 	},
 });
 
@@ -32,9 +32,9 @@ app.get('/office', (req, res) => {
 	office.handleOffice(req, res, db);
 });
 
-// app.get('/pa_rating', (req, res) => {
-// 	pa_rating.handlePARating(req, res, db);
-// });
+app.get('/branch', (req, res) => {
+	pa_rating.handleBranch(req, res, db);
+});
 
 app.listen(5000, () => {
 	console.log('App is running on port 5000');
