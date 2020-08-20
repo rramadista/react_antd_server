@@ -1,10 +1,11 @@
-const getOffice = (req, res, db) => {
+const getPerformanceRating = (req, res, db) => {
 	const page = parseInt(req.query.page) || 1;
 	const per_page = parseInt(req.query.per_page) || 10;
+	const offset = (page - 1) * per_page;
 	const results = {};
 
 	db.select('*')
-		.from('office')
+		.from('pa_rating')
 		.then((data) => {
 			if (data.length) {
 				results.per_page = per_page;
@@ -19,5 +20,5 @@ const getOffice = (req, res, db) => {
 };
 
 module.exports = {
-	getOffice,
+	getPerformanceRating,
 };

@@ -1,1 +1,75 @@
-GET http://localhost:5000/office
+GET http://localhost:5000/projects
+Content-Type: application/json
+ 
+{
+    "userId": 1
+}
+
+###
+
+GET http://localhost:5000/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2MDUzNDA2IiwiaWF0IjoxNTk1MDU4NzU2fQ.c-c0jca3_hbDOdx1-eJC-HY1RaedpKbGUN-Mwe7sQgM
+
+###
+
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "username": "tprabowo",
+    "password": "password"
+}
+
+###
+
+POST http://localhost:5000/users/register
+Content-Type: application/json
+
+# {
+#     "id": "16053406",
+#     "name": "Raden Muhammad Pradana Ramadista",
+#     "email": "raden.ramadista@bankmega.com",
+#     "password": "rahasia"
+# },
+{
+    "id": "19124169",
+    "name": "Tri Aprilian Prabowo",
+    "email": "tri.prabowo@bankmega.com",
+    "password": "19124169"
+}
+
+###
+
+POST http://localhost:5000/user/login
+Content-Type: application/json
+
+# {
+#     "id": "16053406",
+#     "password": "rahasia"
+# },
+{
+    "id": "19124169",
+    "password": "19124169"
+}
+
+###
+
+GET http://localhost:5000/org_chart
+
+###
+
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "id": "16053406"
+}
+
+###
+
+GET http://localhost:5000/dashboard
+Content-Type: application/json
+
+{
+    "userId": 1
+}

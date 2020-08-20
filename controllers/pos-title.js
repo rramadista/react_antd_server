@@ -1,16 +1,12 @@
-const handlePosTitle = (req, res, db) => {
+const getPosTitle = (req, res, db) => {
 	const page = parseInt(req.query.page) || 1;
 	const per_page = parseInt(req.query.per_page) || 10;
-	const offset = (page - 1) * per_page;
 	const results = {};
 
-	db.select('*')
-		.from('pa_rating')
-		.offset(offset)
-		.limit(per_page)
+	db.select('*', db.raw('current_fte + current_os as current_total'))
+		.from('pos_title')
 		.then((data) => {
 			if (data.length) {
-				// results.total = total.count;
 				results.per_page = per_page;
 				results.page = page;
 				results.results = data;
@@ -23,5 +19,5 @@ const handlePosTitle = (req, res, db) => {
 };
 
 module.exports = {
-	handlePosTitle: handlePosTitle,
+	getPosTitle,
 };

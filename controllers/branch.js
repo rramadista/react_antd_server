@@ -1,10 +1,12 @@
-const getOffice = (req, res, db) => {
+const db = require('../config/db');
+
+const getBranch = (req, res) => {
 	const page = parseInt(req.query.page) || 1;
 	const per_page = parseInt(req.query.per_page) || 10;
 	const results = {};
 
 	db.select('*')
-		.from('office')
+		.from('branch')
 		.then((data) => {
 			if (data.length) {
 				results.per_page = per_page;
@@ -19,5 +21,5 @@ const getOffice = (req, res, db) => {
 };
 
 module.exports = {
-	getOffice,
+	getBranch,
 };
