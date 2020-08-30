@@ -9,11 +9,12 @@ app.use(cors());
 app.use(compression());
 
 // Use Routes
-app.use('/branch', require('./routes/branch'));
-app.use('/office', require('./routes/office'));
-app.use('/perf-rating', require('./routes/perf-rating'));
+app.use('/branch', require('./routes/branch.router'));
+app.use('/office', require('./routes/office.router'));
+app.use('/perf-rating', require('./routes/perf-rating.router'));
 app.use('/org-chart', require('./routes/org-chart'));
-app.use('/pos-title', require('./routes/pos-title'));
+app.use('/pos-title', require('./routes/pos-title.router'));
 app.use('/user', require('./routes/user.router'));
+app.use('/employee', require('./routes/emp.router'));
 
 module.exports = app;
