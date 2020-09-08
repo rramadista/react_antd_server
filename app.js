@@ -16,5 +16,6 @@ app.use('/org-chart', require('./routes/org-chart'));
 app.use('/pos-title', require('./routes/pos-title.router'));
 app.use('/user', require('./routes/user.router'));
 app.use('/employee', require('./routes/emp.router'));
+app.use('/org-group', require('./routes/org-group.router'));
 
 module.exports = app;

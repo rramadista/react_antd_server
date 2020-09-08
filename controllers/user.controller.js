@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const db = require('../config/db');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const getAllData = require('../services/getData');
 
 const { ACCESS_TOKEN_SECRET } = config;
 
@@ -39,7 +40,7 @@ const registerUser = async (req, res) => {
 			.into('login')
 			.returning('id')
 			.then(async (loginUserid) => {
-				const user = await trx('users').returning('*').insert({
+				const user = await trx('user').returning('*').insert({
 					id: loginUserid[0],
 					name: displayName,
 					email,
@@ -76,7 +77,7 @@ const loginUser = async (req, res) => {
 				try {
 					const user = await db
 						.select('*')
-						.from('users')
+						.from('user')
 						.where('id', '=', id);
 
 					const accessToken = jwt.sign(
@@ -104,25 +105,27 @@ const loginUser = async (req, res) => {
 		.catch((err) => res.status(500).json({ error: err.message }));
 };
 
-const getAllUser = (req, res) => {
-	const page = parseInt(req.query.page) || 1;
-	const per_page = parseInt(req.query.per_page) || 10;
-	const results = {};
+// const getAllUser = (req, res) => {
+// 	const page = parseInt(req.query.page) || 1;
+// 	const per_page = parseInt(req.query.per_page) || 10;
+// 	const results = {};
 
-	db.select('*')
-		.from('users')
-		.then((data) => {
-			if (data.length) {
-				results.per_page = per_page;
-				results.page = page;
-				results.results = data;
-				res.json(results);
-			} else {
-				res.status(400).json('Data not found');
-			}
-		})
-		.catch((err) => res.status(500).json({ error: err.message }));
-};
+// 	db.select('*')
+// 		.from('user')
+// 		.then((data) => {
+// 			if (data.length) {
+// 				results.per_page = per_page;
+// 				results.page = page;
+// 				results.results = data;
+// 				res.json(results);
+// 			} else {
+// 				res.status(400).json('Data not found');
+// 			}
+// 		})
+// 		.catch((err) => res.status(500).json({ error: err.message }));
+// };
+
+const getAllUser = (req, res) => getAllData(req, res, 'user');
 
 const deleteUser = async (req, res) => {
 	try {
@@ -134,7 +137,7 @@ const deleteUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-	const user = await db.select('*').from('users').where('id', '=', req.user);
+	const user = await db.select('*').from('user').where('id', '=', req.user);
 	res.json({
 		id: user[0].id,
 		displayName: user[0].name,
@@ -152,7 +155,7 @@ const checkToken = async (req, res) => {
 
 		const user = await db
 			.select('*')
-			.from('users')
+			.from('user')
 			.where('id', '=', verified.id);
 		if (!user) return res.json(false);
 
