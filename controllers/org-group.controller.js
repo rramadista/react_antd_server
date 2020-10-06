@@ -1,12 +1,8 @@
-const getAllData = require('../services/getData');
-
 const dataModel = require('../models/org-group.model');
+// const getAllData = require('../services/getData');
 
-// GET ALL DATA
-const getOrgGroup = (req, res) => getAllData(req, res, 'org_group');
-
-// ADD DATA
-const addOrgGroup = async (req, res) => {
+// ADD NEW ITEM
+const createOrgGroup = async (req, res) => {
 	const { id, code, name } = req.body;
 
 	if (!id || !name) {
@@ -15,48 +11,112 @@ const addOrgGroup = async (req, res) => {
 			.json({ msg: 'Please provide all information needed' });
 	} else {
 		try {
-			const newData = await dataModel.addData('org_group', {
+			const newItem = await dataModel.create('org_group', {
 				id,
 				code,
 				name,
 			});
-			res.status(201).json(newData);
+			res.status(201).json(newItem);
 		} catch (err) {
 			res.status(500).json({ error: err.message });
 		}
 	}
 };
 
-// UPDATE DATA
-const updateOrgGroup = async (req, res) => {
+// ADD BULK ITEMS
+const bulkCreateOrgGroup = async (req, res) => {
+	const itemsToInsert = req.body;
+
+	try {
+		const newItems = await dataModel.create('org_group', itemsToInsert);
+		res.status(201).json(newItems);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+};
+
+// VIEW ITEM BY ID
+const findOrgGroupById = async (req, res) => {
+	const id = req.params.id;
+
+	await dataModel
+		.find('org_group', id)
+		.then((data) => {
+			if (data.length) {
+				res.json(data);
+			} else {
+				res.status(400).json('Data not found');
+			}
+		})
+		.catch((err) => res.status(500).json({ error: err.message }));
+};
+
+// VIEW ALL ITEMS
+const getOrgGroup = async (req, res) => {
+	const page = parseInt(req.query.page) || 1;
+	const per_page = parseInt(req.query.per_page) || 10;
+	const results = {};
+
+	await dataModel
+		.getAll('org_group')
+		.then((data) => {
+			if (data.length) {
+				results.per_page = per_page;
+				results.page = page;
+				results.results = data;
+				res.json(results);
+			} else {
+				res.status(400).json('Data not found');
+			}
+		})
+		.catch((err) => res.status(500).json({ error: err.message }));
+};
+
+// EDIT ITEM BY ID
+const updateOrgGroupById = async (req, res) => {
 	const id = req.params.id;
 	const { code, name } = req.body;
 
 	if (!id) {
-		return res.status(400).json({ msg: 'You are missing information' });
+		return res.status(400).json({ msg: 'Please provide an ID' });
 	} else {
 		try {
-			const addChanges = await dataModel.updateData('org_group', id, {
+			const updatedItem = await dataModel.update('org_group', id, {
 				code,
 				name,
 			});
-			res.status(200).json(addChanges);
+			res.status(200).json(updatedItem);
 		} catch {
 			res.status(500).json({ error: err.message });
 		}
 	}
 };
 
-// DELETE DATA
-const deleteOrgGroup = async (req, res) => {
+// DELETE ITEM BY ID
+const deleteOrgGroupById = async (req, res) => {
 	const id = req.params.id;
 
-	try {
-		const deletedData = await dataModel.deleteData('org_group', id);
-		res.status(204).json(deletedData);
-	} catch {
-		res.status(500).json({ error: err.message });
+	if (!id) {
+		return res.status(400).json({ msg: 'Please provide an ID' });
+	} else {
+		try {
+			const deletedItem = await dataModel.remove('org_group', id);
+			res.status(204).json(deletedItem);
+		} catch {
+			res.status(500).json({ error: err.message });
+		}
 	}
 };
 
-module.exports = { getOrgGroup, addOrgGroup, updateOrgGroup, deleteOrgGroup };
+// DELETE ALL ITEMS
+const deleteOrgGroup = async (req, res) => {};
+
+module.exports = {
+	createOrgGroup,
+	bulkCreateOrgGroup,
+	findOrgGroupById,
+	getOrgGroup,
+	updateOrgGroupById,
+	deleteOrgGroupById,
+	deleteOrgGroup,
+};
