@@ -6,15 +6,20 @@ const {
 	getOrgGroup,
 	updateOrgGroupById,
 	deleteOrgGroupById,
+	deleteSelectedOrgGroup,
 	findOrgGroupById,
 } = require('../controllers/org-group.controller');
 
-router.route('/').get(getOrgGroup).post(createOrgGroup);
+router
+	.route('/')
+	.get(getOrgGroup)
+	.post(createOrgGroup)
+	.delete(deleteSelectedOrgGroup);
 router
 	.route('/:id')
 	.get(findOrgGroupById)
 	.put(updateOrgGroupById)
 	.delete(deleteOrgGroupById);
-router.route('/bulkcreate').post(bulkCreateOrgGroup);
+router.route('/bulk').post(bulkCreateOrgGroup);
 
 module.exports = router;

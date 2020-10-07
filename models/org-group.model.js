@@ -30,6 +30,11 @@ const remove = (table, id) => {
 	return db(table).where('id', id).del();
 };
 
+// DELETE MANY RECORDS
+const bulkRemove = (table, id) => {
+	return db(table).whereIn('id', id).del();
+};
+
 // DELETE ALL RECORDS
 const removeAll = (table) => {
 	return db(table).truncate();
@@ -42,5 +47,6 @@ module.exports = {
 	getAll,
 	update,
 	remove,
+	bulkRemove,
 	removeAll,
 };

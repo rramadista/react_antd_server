@@ -108,6 +108,22 @@ const deleteOrgGroupById = async (req, res) => {
 	}
 };
 
+// DELETE SELECTED ITEMS BY ID
+const deleteSelectedOrgGroup = async (req, res) => {
+	const idToDelete = req.body;
+
+	if (idToDelete.length) {
+		try {
+			await dataModel.bulkRemove('org_group', itemsToDelete);
+			res.status(204).json(idToDelete);
+		} catch {
+			res.status(500).json({ error: err.message });
+		}
+	} else {
+		return res.status(400).json({ msg: 'Please provide an ID' });
+	}
+};
+
 // DELETE ALL ITEMS
 const deleteOrgGroup = async (req, res) => {};
 
@@ -118,5 +134,6 @@ module.exports = {
 	getOrgGroup,
 	updateOrgGroupById,
 	deleteOrgGroupById,
+	deleteSelectedOrgGroup,
 	deleteOrgGroup,
 };
