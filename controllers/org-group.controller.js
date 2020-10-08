@@ -114,7 +114,7 @@ const deleteSelectedOrgGroup = async (req, res) => {
 
 	if (idToDelete.length) {
 		try {
-			await dataModel.bulkRemove('org_group', itemsToDelete);
+			await dataModel.bulkRemove('org_group', idToDelete);
 			res.status(204).json(idToDelete);
 		} catch {
 			res.status(500).json({ error: err.message });
