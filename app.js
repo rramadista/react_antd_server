@@ -8,6 +8,10 @@ app.use(express.json());
 app.use(cors());
 app.use(compression());
 
+app.get('/', (req, res) => {
+	res.json({ message: 'Welcome to RESTful API with Express and Nodejs' });
+});
+
 // Use Routes
 app.use('/branch', require('./routes/branch.router'));
 app.use('/office', require('./routes/office.router'));

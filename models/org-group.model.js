@@ -1,3 +1,5 @@
+const { search } = require('../app');
+const { table } = require('../config/db');
 const db = require('../config/db');
 
 // ENTRY SINGLE RECORD
@@ -37,7 +39,19 @@ const bulkRemove = (table, id) => {
 
 // DELETE ALL RECORDS
 const removeAll = (table) => {
-	return db(table).truncate();
+	return db(table).del();
+};
+
+// FILTER RECORDS BY CRITERIA
+const getFiltered = (table, searchCriteria) => {
+	return db(table).where((query) => {
+		if (searchCriteria.searchTerm) {
+			query.where(table.name, 'like', `%${searchCriteria.searchTerm}`);
+		}
+		if (searchCriteria.category) {
+			query.orWhere(table.category, '=', searchCriteria.category);
+		}
+	});
 };
 
 module.exports = {
@@ -49,4 +63,5 @@ module.exports = {
 	remove,
 	bulkRemove,
 	removeAll,
+	getFiltered,
 };

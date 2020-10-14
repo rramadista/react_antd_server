@@ -1,5 +1,4 @@
 const dataModel = require('../models/org-group.model');
-// const getAllData = require('../services/getData');
 
 // ADD NEW ITEM
 const createOrgGroup = async (req, res) => {
@@ -8,7 +7,7 @@ const createOrgGroup = async (req, res) => {
 	if (!id || !name) {
 		return res
 			.status(400)
-			.json({ msg: 'Please provide all information needed' });
+			.json({ message: 'Please provide all information needed' });
 	} else {
 		try {
 			const newItem = await dataModel.create('org_group', {
@@ -43,7 +42,7 @@ const findOrgGroupById = async (req, res) => {
 		.find('org_group', id)
 		.then((data) => {
 			if (data.length) {
-				res.json(data);
+				res.json(data[0]);
 			} else {
 				res.status(400).json('Data not found');
 			}
@@ -78,7 +77,7 @@ const updateOrgGroupById = async (req, res) => {
 	const { code, name } = req.body;
 
 	if (!id) {
-		return res.status(400).json({ msg: 'Please provide an ID' });
+		return res.status(400).json({ message: 'Please provide an ID' });
 	} else {
 		try {
 			const updatedItem = await dataModel.update('org_group', id, {
@@ -97,7 +96,7 @@ const deleteOrgGroupById = async (req, res) => {
 	const id = req.params.id;
 
 	if (!id) {
-		return res.status(400).json({ msg: 'Please provide an ID' });
+		return res.status(400).json({ message: 'Please provide an ID' });
 	} else {
 		try {
 			const deletedItem = await dataModel.remove('org_group', id);
@@ -120,18 +119,33 @@ const deleteSelectedOrgGroup = async (req, res) => {
 			res.status(500).json({ error: err.message });
 		}
 	} else {
-		return res.status(400).json({ msg: 'Please provide an ID' });
+		// return res.status(400).json({ msg: 'Please provide an IDs' })
+		try {
+			await dataModel.removeAll('org_group');
+			res.status(204).json({
+				message: 'All data were deleted successfully',
+			});
+		} catch {
+			res.status(500).json({ error: err.message });
+		}
 	}
 };
 
 // DELETE ALL ITEMS
-const deleteOrgGroup = async (req, res) => {};
+const deleteOrgGroup = async (req, res) => {
+	try {
+		await dataModel.removeAll('org_group');
+		res.status(204).json({ message: 'All data were deleted successfully' });
+	} catch {
+		res.status(500).json({ error: err.message });
+	}
+};
 
 module.exports = {
 	createOrgGroup,
 	bulkCreateOrgGroup,
-	findOrgGroupById,
 	getOrgGroup,
+	findOrgGroupById,
 	updateOrgGroupById,
 	deleteOrgGroupById,
 	deleteSelectedOrgGroup,

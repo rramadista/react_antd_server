@@ -4,10 +4,11 @@ const {
 	createOrgGroup,
 	bulkCreateOrgGroup,
 	getOrgGroup,
+	findOrgGroupById,
 	updateOrgGroupById,
 	deleteOrgGroupById,
 	deleteSelectedOrgGroup,
-	findOrgGroupById,
+	deleteOrgGroup,
 } = require('../controllers/org-group.controller');
 
 router
