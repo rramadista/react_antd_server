@@ -15,7 +15,7 @@ const createOrgGroup = async (req, res) => {
 				code,
 				name,
 			});
-			res.status(201).json(newItem);
+			res.status(201).json({ newItem: newItem });
 		} catch (err) {
 			res.status(500).json({ error: err.message });
 		}
@@ -28,7 +28,7 @@ const bulkCreateOrgGroup = async (req, res) => {
 
 	try {
 		const newItems = await dataModel.create('org_group', itemsToInsert);
-		res.status(201).json(newItems);
+		res.status(201).json({ newItems: newItems });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}
@@ -100,7 +100,7 @@ const deleteOrgGroupById = async (req, res) => {
 	} else {
 		try {
 			const deletedItem = await dataModel.remove('org_group', id);
-			res.status(204).json(deletedItem);
+			res.status(204).json({ deleted: deletedItem });
 		} catch {
 			res.status(500).json({ error: err.message });
 		}

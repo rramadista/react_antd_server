@@ -6,7 +6,12 @@
 	"scripts": {
 		"start": "nodemon server.js"
 	},
-	"keywords": [],
+	"keywords": [
+		"nodejs",
+		"express",
+		"postgresql",
+		"restapi"
+	],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {

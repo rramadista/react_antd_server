@@ -1,5 +1,3 @@
-const { search } = require('../app');
-const { table } = require('../config/db');
 const db = require('../config/db');
 
 // ENTRY SINGLE RECORD

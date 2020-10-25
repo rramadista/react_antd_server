@@ -1,26 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const {
-	createOrgGroup,
-	bulkCreateOrgGroup,
-	getOrgGroup,
-	findOrgGroupById,
-	updateOrgGroupById,
-	deleteOrgGroupById,
-	deleteSelectedOrgGroup,
-	deleteOrgGroup,
-} = require('../controllers/org-group.controller');
+
+const orgGroup = require('../controllers/org-group.controller');
 
 router
+	.route('/bulk')
+	.post(orgGroup.bulkCreateOrgGroup) // SUBMIT
+	.delete(orgGroup.deleteSelectedOrgGroup); // DELETE
+router
 	.route('/')
-	.get(getOrgGroup)
-	.post(createOrgGroup)
-	.delete(deleteSelectedOrgGroup);
+	.get(orgGroup.getOrgGroup) // RETRIEVE
+	.post(orgGroup.createOrgGroup) // SUBMIT
+	.delete(orgGroup.deleteOrgGroup); // REMOVE
 router
 	.route('/:id')
-	.get(findOrgGroupById)
-	.put(updateOrgGroupById)
-	.delete(deleteOrgGroupById);
-router.route('/bulk').post(bulkCreateOrgGroup);
+	.get(orgGroup.findOrgGroupById) // RETRIEVE
+	.put(orgGroup.updateOrgGroupById) // UPDATE
+	.delete(orgGroup.deleteOrgGroupById); // REMOVE
 
 module.exports = router;
