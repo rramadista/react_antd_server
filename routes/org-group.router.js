@@ -6,7 +6,7 @@ const orgGroup = require('../controllers/org-group.controller');
 router
 	.route('/bulk')
 	.post(orgGroup.bulkCreateOrgGroup) // SUBMIT
-	.delete(orgGroup.deleteSelectedOrgGroup); // DELETE
+	.delete(orgGroup.deleteSelectedOrgGroup); // REMOVE
 router
 	.route('/')
 	.get(orgGroup.getOrgGroup) // RETRIEVE

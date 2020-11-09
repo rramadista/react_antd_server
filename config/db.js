@@ -1,15 +1,8 @@
-const config = require('../config');
+const config = require('.');
+const knexfile = require('./knexfile');
 
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE } = config;
+const { NODE_ENV } = config;
 
-const db = require('knex')({
-	client: 'pg',
-	connection: {
-		host: DB_HOST,
-		user: DB_USER,
-		password: DB_PASSWORD,
-		database: DB_DATABASE,
-	},
-});
+const db = require('knex')(knexfile[NODE_ENV]);
 
 module.exports = db;

@@ -1,143 +1,181 @@
-const dataModel = require('../models/org-group.model');
+const { createError } = require('../helpers/error.helper');
+const OrgGroup = require('../models/org-group.model');
 
 // ADD NEW ITEM
-const createOrgGroup = async (req, res) => {
+const createOrgGroup = async (req, res, next) => {
 	const { id, code, name } = req.body;
 
-	if (!id || !name) {
-		return res
-			.status(400)
-			.json({ message: 'Please provide all information needed' });
-	} else {
-		try {
-			const newItem = await dataModel.create('org_group', {
-				id,
-				code,
-				name,
-			});
-			res.status(201).json({ newItem: newItem });
-		} catch (err) {
-			res.status(500).json({ error: err.message });
-		}
+	try {
+		if (!id || !name)
+			return next(
+				createError({ status: 400, message: 'Missing required fields' })
+			);
+
+		const newItem = await OrgGroup.create('org_group', {
+			id,
+			code,
+			name,
+		});
+
+		res.status(201).json({
+			ok: true,
+			message: `Created item with id ${id}`,
+			newItem,
+		});
+	} catch (err) {
+		next(err);
 	}
 };
 
 // ADD BULK ITEMS
-const bulkCreateOrgGroup = async (req, res) => {
+const bulkCreateOrgGroup = async (req, res, next) => {
 	const itemsToInsert = req.body;
 
 	try {
-		const newItems = await dataModel.create('org_group', itemsToInsert);
-		res.status(201).json({ newItems: newItems });
+		const newItems = await OrgGroup.create('org_group', itemsToInsert);
+		res.status(201).json({
+			ok: true,
+			message: 'Bulk items created',
+			newItems,
+		});
 	} catch (err) {
-		res.status(500).json({ error: err.message });
+		next(err);
 	}
 };
 
 // VIEW ITEM BY ID
-const findOrgGroupById = async (req, res) => {
+const findOrgGroupById = async (req, res, next) => {
 	const id = req.params.id;
 
-	await dataModel
-		.find('org_group', id)
-		.then((data) => {
-			if (data.length) {
-				res.json(data[0]);
+	try {
+		await OrgGroup.find('org_group', id).then((item) => {
+			if (item.length) {
+				res.status(200).json({
+					ok: true,
+					message: 'Item found',
+					item,
+				});
 			} else {
-				res.status(400).json('Data not found');
+				next(
+					createError({
+						status: 404,
+						message: `Not found item with id ${id}`,
+					})
+				);
 			}
-		})
-		.catch((err) => res.status(500).json({ error: err.message }));
+		});
+	} catch (err) {
+		next(err);
+	}
 };
 
 // VIEW ALL ITEMS
-const getOrgGroup = async (req, res) => {
+const getOrgGroup = async (req, res, next) => {
 	const page = parseInt(req.query.page) || 1;
 	const per_page = parseInt(req.query.per_page) || 10;
 	const results = {};
 
-	await dataModel
-		.getAll('org_group')
-		.then((data) => {
-			if (data.length) {
+	try {
+		await OrgGroup.getAll('org_group').then((items) => {
+			if (items.length) {
 				results.per_page = per_page;
 				results.page = page;
-				results.results = data;
-				res.json(results);
+				results.items = items;
+				res.status(200).json({
+					ok: true,
+					message: 'Items retrieved',
+					results,
+				});
 			} else {
-				res.status(400).json('Data not found');
+				next(
+					createError({
+						status: 404,
+						message: 'Items not found',
+					})
+				);
 			}
-		})
-		.catch((err) => res.status(500).json({ error: err.message }));
+		});
+	} catch (err) {
+		next(err);
+	}
 };
 
 // EDIT ITEM BY ID
-const updateOrgGroupById = async (req, res) => {
+const updateOrgGroupById = async (req, res, next) => {
 	const id = req.params.id;
 	const { code, name } = req.body;
 
-	if (!id) {
-		return res.status(400).json({ message: 'Please provide an ID' });
-	} else {
-		try {
-			const updatedItem = await dataModel.update('org_group', id, {
-				code,
-				name,
-			});
-			res.status(200).json(updatedItem);
-		} catch {
-			res.status(500).json({ error: err.message });
-		}
+	try {
+		const updatedItem = await OrgGroup.update('org_group', id, {
+			code,
+			name,
+		});
+
+		res.status(200).json({
+			ok: true,
+			message: `Updated item with id ${id}`,
+			updatedItem,
+		});
+	} catch (err) {
+		next(err);
 	}
 };
 
 // DELETE ITEM BY ID
-const deleteOrgGroupById = async (req, res) => {
+const deleteOrgGroupById = async (req, res, next) => {
 	const id = req.params.id;
 
-	if (!id) {
-		return res.status(400).json({ message: 'Please provide an ID' });
-	} else {
-		try {
-			const deletedItem = await dataModel.remove('org_group', id);
-			res.status(204).json({ deleted: deletedItem });
-		} catch {
-			res.status(500).json({ error: err.message });
-		}
+	try {
+		const deletedItem = await OrgGroup.remove('org_group', id);
+		res.status(200).json({
+			ok: true,
+			message: `Deleted item with id ${id}`,
+			deletedId: deletedItem,
+		});
+	} catch (err) {
+		next(err);
 	}
 };
 
 // DELETE SELECTED ITEMS BY ID
-const deleteSelectedOrgGroup = async (req, res) => {
+const deleteSelectedOrgGroup = async (req, res, next) => {
 	const idToDelete = req.body;
 
 	if (idToDelete.length) {
 		try {
-			await dataModel.bulkRemove('org_group', idToDelete);
-			res.status(204).json(idToDelete);
-		} catch {
-			res.status(500).json({ error: err.message });
+			const deletedItems = await OrgGroup.bulkRemove(
+				'org_group',
+				idToDelete
+			);
+			res.status(200).json({
+				ok: true,
+				message: `Deleted ${deletedItems.length} items`,
+				deletedId: deletedItems,
+			});
+		} catch (err) {
+			next(err);
 		}
 	} else {
-		// return res.status(400).json({ msg: 'Please provide an IDs' })
 		try {
-			await dataModel.removeAll('org_group');
-			res.status(204).json({
-				message: 'All data were deleted successfully',
+			await OrgGroup.removeAll('org_group');
+			res.status(200).json({
+				message: 'All items were deleted successfully',
 			});
-		} catch {
-			res.status(500).json({ error: err.message });
+		} catch (err) {
+			next(err);
 		}
 	}
 };
 
 // DELETE ALL ITEMS
-const deleteOrgGroup = async (req, res) => {
+const deleteOrgGroup = async (req, res, next) => {
 	try {
-		await dataModel.removeAll('org_group');
-		res.status(204).json({ message: 'All data were deleted successfully' });
-	} catch {
-		res.status(500).json({ error: err.message });
+		await OrgGroup.removeAll('org_group');
+		res.status(200).json({
+			message: 'All items were deleted successfully',
+		});
+	} catch (err) {
+		next(err);
 	}
 };
 
