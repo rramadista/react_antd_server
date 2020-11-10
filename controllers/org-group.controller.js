@@ -1,5 +1,5 @@
 const { createError } = require('../helpers/error.helper');
-const OrgGroup = require('../models/org-group.model');
+const OrgGroup = require('../helpers/model-guts.helper');
 
 // ADD NEW ITEM
 const createOrgGroup = async (req, res, next) => {
@@ -33,6 +33,7 @@ const bulkCreateOrgGroup = async (req, res, next) => {
 
 	try {
 		const newItems = await OrgGroup.create('org_group', itemsToInsert);
+
 		res.status(201).json({
 			ok: true,
 			message: 'Bulk items created',
@@ -48,7 +49,7 @@ const findOrgGroupById = async (req, res, next) => {
 	const id = req.params.id;
 
 	try {
-		await OrgGroup.find('org_group', id).then((item) => {
+		await OrgGroup.findById('org_group', id).then((item) => {
 			if (item.length) {
 				res.status(200).json({
 					ok: true,
@@ -127,6 +128,7 @@ const deleteOrgGroupById = async (req, res, next) => {
 
 	try {
 		const deletedItem = await OrgGroup.remove('org_group', id);
+
 		res.status(200).json({
 			ok: true,
 			message: `Deleted item with id ${id}`,
@@ -141,38 +143,28 @@ const deleteOrgGroupById = async (req, res, next) => {
 const deleteSelectedOrgGroup = async (req, res, next) => {
 	const idToDelete = req.body;
 
-	if (idToDelete.length) {
-		try {
-			const deletedItems = await OrgGroup.bulkRemove(
-				'org_group',
-				idToDelete
-			);
-			res.status(200).json({
-				ok: true,
-				message: `Deleted ${deletedItems.length} items`,
-				deletedId: deletedItems,
-			});
-		} catch (err) {
-			next(err);
-		}
-	} else {
-		try {
-			await OrgGroup.removeAll('org_group');
-			res.status(200).json({
-				message: 'All items were deleted successfully',
-			});
-		} catch (err) {
-			next(err);
-		}
+	try {
+		const deletedItems = await OrgGroup.bulkRemove('org_group', idToDelete);
+
+		res.status(200).json({
+			ok: true,
+			message: `Deleted ${deletedItems.length} items`,
+			deletedId: deletedItems,
+		});
+	} catch (err) {
+		next(err);
 	}
 };
 
 // DELETE ALL ITEMS
 const deleteOrgGroup = async (req, res, next) => {
 	try {
-		await OrgGroup.removeAll('org_group');
+		const deletedItems = await OrgGroup.removeAll('org_group');
+
 		res.status(200).json({
+			ok: true,
 			message: 'All items were deleted successfully',
+			deletedItems: deletedItems,
 		});
 	} catch (err) {
 		next(err);
